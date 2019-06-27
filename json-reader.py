@@ -70,8 +70,6 @@ if __name__ == '__main__':
         bugs_count.append(value['Count'])
         bugs_duration.append(value['etime'] - value['ctime'])
         bugs_summary.append(value['Summary'])
-        bugs_id1.append(key)
-        bugs_id2.append(key)
 
     #plot_sample_length_distribution(bugs_text)
     #plot_sample_distribution(bugs_count)
@@ -88,7 +86,7 @@ if __name__ == '__main__':
     #print("First bug report as sequence: ",bugs_seq[0])
     #back_seq = tok.sequences_to_texts(bugs_seq)
     #print("First bug translated back: ", back_seq[0])
-    x1_train, x1_test, x2_train, x2_test = sk.train_test_split(bugs_id1,bugs_id2,test_size=0.2)
-    print(x1_train[3]," :: ",x2_train[3])
+    bug_seq_train, bug_seq_test, bug_cnt_train, bug_cnt_test, bug_dur_train, bug_dur_test = sk.train_test_split(bugs_seq,bugs_count,bugs_duration,test_size=0.2)
+
 
     #print("Word count: ", tok.word_counts)
