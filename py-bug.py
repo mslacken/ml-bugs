@@ -8,6 +8,7 @@ import bugzilla
 import time
 import datetime
 import json
+import argparse
 
 def getbug_fmt(bzapi,bug_id):
     data = {}
@@ -34,54 +35,57 @@ def getbug_fmt(bzapi,bug_id):
         data["Text"] = comments[0]["text"]
 #   print("\nLast comment data:\n%s" % pprint.pformat(comments[-1]))
     return data
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Read in bugzilla.')
+    parser.add_argument('--url',dest='url',default='fastzilla.suse.com',help='url of bugzilla sever')
+    parser.add_argument('--bug',dest='bug',default='1122748',help='bug to start',type=int)
+    parser.add_argument('--nr',dest='nr',default=100,help='number of bugs',type=int)
     
-# public test instance of bugzilla.redhat.com. It's okay to make changes
-URL = "bugzilla.opensuse.org"
+    args = parser.parse_args()
+    # public test instance of bugzilla.redhat.com. It's okay to make changes
 
-my_api = bugzilla.Bugzilla(URL)
+    my_api = bugzilla.Bugzilla(args.url)
 
-not_allowed_f_name = 'not_allowed.lst'
+    not_allowed_f_name = 'not_allowed.lst'
 
-bug_end = 1122748
-nr_bugs = 10000
+    not_allowed_lst = []
+    bugs = {}
 
-not_allowed_lst = []
-bugs = {}
-
-# read in list of not allowed bugs
-try:
-    not_allowed_f = open(not_allowed_f_name,'r')
-except:
-    print("Could not read %s" % not_allowed_f_name)
-else:
-    not_allowed_lst = not_allowed_f.read().splitlines()
-    not_allowed_lst = list(filter(None,not_allowed_lst))
-    for index, item in enumerate(not_allowed_lst):
-        not_allowed_lst[index] = int(item)
-    not_allowed_f.close()
-    print("Read %i not allowed bugs" % len(not_allowed_lst))
+    # read in list of not allowed bugs
+    try:
+        not_allowed_f = open(not_allowed_f_name,'r')
+    except:
+        print("Could not read %s" % not_allowed_f_name)
+    else:
+        not_allowed_lst = not_allowed_f.read().splitlines()
+        not_allowed_lst = list(filter(None,not_allowed_lst))
+        for index, item in enumerate(not_allowed_lst):
+            not_allowed_lst[index] = int(item)
+        not_allowed_f.close()
+        print("Read %i not allowed bugs" % len(not_allowed_lst))
 
 
-for bug_nr in range(bug_end,bug_end - nr_bugs, -1):
-    if bug_nr not in not_allowed_lst:
-        ret_data = getbug_fmt(my_api,bug_nr)
-        if ret_data["is_allowed"]:
-            print("Read in bug %i" % bug_nr)
-            bugs[bug_nr] = ret_data
-        else:
-            print("Could not access bug %i" % bug_nr)
-            not_allowed_lst.append(bug_nr)
+    for bug_nr in range(args.bug,args.bug - args.nr, -1):
+        if bug_nr not in not_allowed_lst:
+            ret_data = getbug_fmt(my_api,bug_nr)
+            if ret_data["is_allowed"]:
+                print("Read in bug %i" % bug_nr)
+                bugs[bug_nr] = ret_data
+            else:
+                print("Could not access bug %i" % bug_nr)
+                not_allowed_lst.append(bug_nr)
 
-print("Allowed: %s Forbidden: %s" % (len(bugs),len(not_allowed_lst)))
-# write out list
-if len(not_allowed_lst) != 0:
-    not_allowed_f = open(not_allowed_f_name,'w')
-    not_allowed_lst = map(lambda x:str(x)+'\n',not_allowed_lst)
-    not_allowed_f.writelines(not_allowed_lst)
-    not_allowed_f.close()
+    print("Allowed: %s Forbidden: %s" % (len(bugs),len(not_allowed_lst)))
+    # write out list
+    if len(not_allowed_lst) != 0:
+        not_allowed_f = open(not_allowed_f_name,'w')
+        not_allowed_lst = map(lambda x:str(x)+'\n',not_allowed_lst)
+        not_allowed_f.writelines(not_allowed_lst)
+        not_allowed_f.close()
 
-# write out dict
-if len(bugs) != 0:
-    with open('bugs.txt','w') as ofile:
-        ofile.write(json.dumps(bugs))
+    # write out dict
+    if len(bugs) != 0:
+        with open('bugs.txt','w') as ofile:
+            ofile.write(json.dumps(bugs))
 
