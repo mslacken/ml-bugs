@@ -16,6 +16,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Read in bugzilla.')
     parser.add_argument('-u','--url',dest='url',default='https://bugzilla.opensuse.org',help='url of bugzilla sever')
     parser.add_argument('-o','--output',dest='output',default='bugs.txt',help='name of the output file')
+    parser.add_argument('-c','--component',dest='component',default="Development",help='name of the component to query')
     
     args = parser.parse_args()
     # public test instance of bugzilla.redhat.com. It's okay to make changes
@@ -26,7 +27,7 @@ if __name__ == '__main__':
     bugs_rec = []
 
     bz_query = my_api.build_query(
-            component = "Development",
+            component = args.component,
             status = "RESOLVED",
             product = "openSUSE Distribution")
     try:
@@ -59,4 +60,5 @@ if __name__ == '__main__':
         ofile.write("\n")
         ofile.flush()
         print("wrote #%i" % bug.id)
-
+# call with
+# for comp in Apache AppArmor AutoYast Basesystem Bootloader Cloud:Images Cloud:Tools Commercial Containers Development Documentation Evolution Firefox GNOME 'High Availability' Installation 'KDE Applications' 'KDE Workspace(Plasma)' KDE3 Kernel KVM LibreOffice libzypp 'Live Medium' LXDE LXQT Maintenance Network OpenStack Other Patterns Printing 'Release Notes' Ruby Salt Samba Security Sound Translations 'Upgrade Problems' Virtualization:Other Virtualization:Tolls Virtualization:VMDP WSL X.org 'X11 3rd Party Driver' 'X11 Applications' Xen Xfce YaST2; do echo "$comp"; done
