@@ -38,7 +38,7 @@ def getbug_fmt(bzapi,bug_id):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Read in bugzilla.')
-    parser.add_argument('--url',dest='url',default='fastzilla.suse.com',help='url of bugzilla sever')
+    parser.add_argument('--url',dest='url',default='https://bugzilla.suse.com',help='url of bugzilla sever')
     parser.add_argument('--bug',dest='bug',default='1122748',help='bug to start',type=int)
     parser.add_argument('--nr',dest='nr',default=100,help='number of bugs',type=int)
     
