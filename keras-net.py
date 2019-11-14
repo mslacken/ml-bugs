@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import keras as kr
 import sklearn.model_selection as sk
 import tensorflow as tf
+import sys
 
 
 def plot_sample_length_distribution(sample_texts):
@@ -75,8 +76,10 @@ if __name__ == '__main__':
 
     try: 
         bugs = json.load(open(args.bugs_file_name))
-    except:
+    except Exception as excep_reader:
         print("Could not read %s" % args.bugs_file_name)
+        print(excep_reader)
+        sys.exit(1)
 
     print("Loaded %i bugs" % (len(bugs)))
 
@@ -91,10 +94,10 @@ if __name__ == '__main__':
 
     for key,value in bugs.items():
         bugs_keys.append(key)
-        bugs_text.append(value['Summary'] + ' ' + value['Text'][:args.max_len])
-        bugs_count.append(value['Count'])
+        bugs_text.append(value['summary'] + ' ' + value['text'][:args.max_len])
+        bugs_count.append(value['count'])
         bugs_duration.append(value['etime'] - value['ctime'])
-        bugs_summary.append(value['Summary'])
+        bugs_summary.append(value['summary'])
 
     #plot_sample_length_distribution(bugs_text)
     #plot_sample_distribution(bugs_count)
