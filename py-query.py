@@ -38,6 +38,7 @@ if __name__ == '__main__':
         print(excep_se)
         sys.exit(1)
     print("got %i bugs" % len(bugs_rec))
+    wrapper_dict = {}
     for bug in bugs_rec:
         bug_dict = {}
         bug_dict["id"] = bug.id
@@ -56,9 +57,10 @@ if __name__ == '__main__':
         bug_dict["summary"] = bug.summary 
         bug_dict["component"] = bug.component
         bug_dict["product"] = bug.product
-        ofile.write(json.dumps(bug_dict))
-        ofile.write("\n")
-        ofile.flush()
+        wrapper_dict[bug.id] = bug_dict
         print("wrote #%i" % bug.id)
+
+    ofile.write(json.dumps(wrapper_dict))
+    ofile.flush()
 # call with
 # for comp in Apache AppArmor AutoYast Basesystem Bootloader Cloud:Images Cloud:Tools Commercial Containers Development Documentation Evolution Firefox GNOME 'High Availability' Installation 'KDE Applications' 'KDE Workspace(Plasma)' KDE3 Kernel KVM LibreOffice libzypp 'Live Medium' LXDE LXQT Maintenance Network OpenStack Other Patterns Printing 'Release Notes' Ruby Salt Samba Security Sound Translations 'Upgrade Problems' Virtualization:Other Virtualization:Tolls Virtualization:VMDP WSL X.org 'X11 3rd Party Driver' 'X11 Applications' Xen Xfce YaST2; do echo "$comp"; done
